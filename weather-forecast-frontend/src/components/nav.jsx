@@ -4,16 +4,19 @@ import React from 'react';
     render() {    
       return (
         <div>
-           <nav class="navbar navbar-dark bg-dark">
-                <a class="navbar-brand" href="#">
-                    <img src="/docs/4.3/assets/brand/bootstrap-solid.svg" width="30" height="30" class="d-inline-block align-top" alt="  "></img>
-                </a>
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <h2 class="text-primary text-center"> NavBar  </h2>
-                    </li>
-                </ul>
-            </nav>
+           <nav class="navbar navbar-dark bg-dark fixed-top">
+            <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="/">Logo </a>
+            <ul class="navbar-nav px-3 center">
+              <li class="nav-item text-nowrap">
+                <center><h3 class="text-white text-center">NavBar </h3></center>
+              </li>
+            </ul>
+            <ul class="navbar-nav px-3">
+              <li class="nav-item text-nowrap">
+                <a class="nav-link" href="/">Sign out</a>
+              </li>
+            </ul>
+          </nav>
         </div>
       );
     }

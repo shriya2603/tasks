@@ -1,7 +1,13 @@
 import React ,{Component}from 'react';
 import {Line} from 'react-chartjs-2';
 
+const styles ={
+    "padding-left": "200px"
+}
+
 const options = {
+
+responsive:true,
     title : {
         display: true,
         text :"Line chart"
@@ -31,6 +37,7 @@ const newDataDisplay = {
     labels :[],
     datasets:[
         {
+            lineTension: 0.1,
             label: "Weather",
             data : []
         }
@@ -38,13 +45,31 @@ const newDataDisplay = {
 }
 
 
-class LineExample extends Component {
+class LineChart extends Component {
     state = { 
-        dataDisplay : newDataDisplay
+     }
+     timer = {}
+     constructor(){
+         super();
+         this.state = {
+            dataDisplay : newDataDisplay
+         }
+         console.log(this.state.dataDisplay);
+         this.getFeeds();
      }
      componentDidMount(){
-        this.getFeeds();
+        // this.getFeeds();
+        this.timer=setInterval(() => {
+                        this.getFeeds();
+                       
+        }, 5000)
      }
+
+    componentWillUnmount(){
+        clearInterval(this.timer);
+        this.setState({dataDisplay: null});
+        console.log("Component unmount ");
+    }
      getFeeds(){
         newDataDisplay.labels = [];
         newDataDisplay.datasets[0].data= [];
@@ -59,19 +84,19 @@ class LineExample extends Component {
                         newDataDisplay.datasets[0].data.push( h.temp_f);
                         newDataDisplay.labels.push(h.time);
                     }
-                    console.log("Data from Api ");
-                    console.log(newDataDisplay);
+                    // console.log("Data from Api ");
+                    // console.log(newDataDisplay);
                     this.setState({dataDisplay: newDataDisplay});
                 })
                 .catch((err)=>{
                     console.error(err);
                 });
-                console.log("Data send ");
-                console.log(newDataDisplay);
+                // console.log("Data send ");
+                // console.log(newDataDisplay);
       }
     render() { 
-        console.log("data is "+JSON.stringify(this.state.dataDisplay));
-        return (<div>
+        // console.log("data is "+JSON.stringify(this.state.dataDisplay));
+        return (<div style={styles}>
             <Line data={this.state.dataDisplay} options={options}> </Line>
         </div>
 
@@ -79,6 +104,6 @@ class LineExample extends Component {
     }
 }
  
-export default LineExample;
+export default LineChart;
 
 

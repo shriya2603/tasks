@@ -1,17 +1,18 @@
 import React from 'react';
-import LineExample from './components/lineChart';
+import LineChart from './components/lineChart';
 
   import Nav from './components/nav';
+import SideBar from './components/sidebar';
 
   export default class App extends React.Component {
     render() {    
       return (
-        <div className="App">
-          
-            <div>
-              <Nav />
-              <LineExample />
-            </div>
+        <div>
+          <SideBar />
+          <div className="main">
+            <Nav />
+            <LineChart />
+          </div>
         </div>
       );
     }
