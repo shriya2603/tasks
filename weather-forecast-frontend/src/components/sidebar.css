@@ -1,6 +1,6 @@
 .sidebar {
   margin: 0;
-  padding: 50px;
+  padding-top: 50px;
   width: 150px;
   background-color: #f1f1f1;
   position: fixed;
@@ -22,6 +22,7 @@
 
 .sidebar a:hover:not(.active) {
   background-color: #555;
+  width: 150px;
   color: white;
 }
 

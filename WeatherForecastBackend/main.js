@@ -1,7 +1,4 @@
 const https = require("https");
-const fs = require("fs");
-const jfile = require("./weatherData.json");
-const { resolve } = require("path");
 
 function callWeatherAPI() {
     try {
@@ -22,16 +19,12 @@ function callWeatherAPI() {
             }
         }
         return new Promise((resolve, reject )=>{
-            const req = https.request(options, (res) => {
+            const request = https.request(options, (response) => {
            
-                res.on("data",(d)=>{
+                response.on("data",(d)=>{
                     body += d;
                 });
-                res.on("end", ()=>{
-                    // const jsonObject = JSON.parse(body);
-                    // console.log(jsonObject.);
-                    console.log("end");
-                    //fs.writeFileSync(process.cwd() +"/weatherData.json", body);
+                response.on("end", ()=>{
                     try {
                         let jsonData  = JSON.parse(body);
                        
@@ -39,80 +32,33 @@ function callWeatherAPI() {
                         const hourArray = jsonData.forecast.forecastday[0].hour;
                         for(let i = 0 ;i < hourArray.length;i++){
                             dataJson.forecast.push({"time": hourArray[i].time.split(" ")[1], "temp_f" : hourArray[i].temp_f});
-                            // console.log(hourArray[i].time+ " temp_f "+ hourArray[i].temp_f);
-                            // console.log(" ---------- ");
                         }
-            
-                        console.log(dataJson);
                         resolve(dataJson);
-                       
                     } catch (error) {
                         console.error("error is "+ error);
                         reject(error);
                     }
-                    // return dataJson;
                 });
-            
             });
-            
-            req.on("error",(e)=>{
-                console.log("error is" +JSON.stringify(e));
+            request.on("error",(error)=>{
+                console.log("Error in weatherAPI request"+JSON.stringify(error));
                 reject(error);
             });
-            
-            req.end();
-            return dataJson;
+            request.end();
         });
         
     } catch (error) {
-        console.log("Error is "+error);
+        console.log("Error in callWeatherAPI "+JSON.stringify(error));
     }
 
 }
-
-
-// function formatJSON(body){
-//     try {
-//         // console.log("Data from json ");
-//         // fs.writeFile
-//         // // console.log(JSON.stringify(jfile.forecast.forecastday));
-//         // const forecastArray = jfile.forecast.forecastday[0].hour;
-//         // for(let i = 0 ;i < forecastArray.length;i++){
-//         //     console.log(forecastArray[i].time+ " temp_f "+ forecastArray[i].temp_f);
-//         //     console.log(" ---------- ");
-//         // }
-
-//         const dataJson = {
-//             current : {
-//             },
-//             forecast : [
-//             ]
-//         };
-
-       
-
-//     } catch (error) {
-//         console.log(" error is "+error);
-//     }
-// }
-
-// fs.readFile("./weatherData.json", (err, content)=>{
-//     if(!err){
-//         console.log("error "+err);
-//     }
-//     console.log(JSON.parse(content));
-// });
-
-
 
 module.exports=async  function main() {
     try {
         return await callWeatherAPI();
-        // return await formatJSON(b);
     } catch (error) {
-        console.log("Error is "+JSON.stringify(error));
+        console.log("Error in main "+JSON.stringify(error));
+        throw new Error(error);
     }
     
 }
-
-// main();

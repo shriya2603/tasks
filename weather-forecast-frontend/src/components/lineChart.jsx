@@ -1,24 +1,29 @@
 import React ,{Component}from 'react';
+import axios from 'axios';
 import {Line} from 'react-chartjs-2';
 
 const styles ={
+    "padding-top" : "100px",
     "padding-left": "200px"
 }
 
 const options = {
-
 responsive:true,
     title : {
         display: true,
-        text :"Line chart"
+        text :"Weather Forecast chart"
     },
     scales :{
         xAxes: [
             {
-              display: true,
-              gridLines: {
-                display: true
-              }
+                ticks :{
+                    min : 0,
+                    max : 26,
+                },
+                display: true,
+                gridLines: {
+                    display: true
+                }
             }
           ],
         yaAxes :[
@@ -38,13 +43,11 @@ const newDataDisplay = {
     datasets:[
         {
             lineTension: 0.1,
-            label: "Weather",
+            label: "Tempature",
             data : []
         }
     ]
 }
-
-
 class LineChart extends Component {
     state = { 
      }
@@ -58,7 +61,6 @@ class LineChart extends Component {
          this.getFeeds();
      }
      componentDidMount(){
-        // this.getFeeds();
         this.timer=setInterval(() => {
                         this.getFeeds();
                        
@@ -70,37 +72,35 @@ class LineChart extends Component {
         this.setState({dataDisplay: null});
         console.log("Component unmount ");
     }
-     getFeeds(){
+    getFeeds(){
         newDataDisplay.labels = [];
         newDataDisplay.datasets[0].data= [];
-        fetch("http://localhost:4000/api/getWetherData")
-                .then(result=> result.json())
-                .then(function(result){
-                    newDataDisplay.labels.push("current");
-                    newDataDisplay.datasets[0].data.push(result.current.temp_f);
-                    const forecast = result.forecast;
-                    for(let i=0;i<forecast.length;i++){
-                        const h = forecast[i];
-                        newDataDisplay.datasets[0].data.push( h.temp_f);
-                        newDataDisplay.labels.push(h.time);
-                    }
-                    // console.log("Data from Api ");
-                    // console.log(newDataDisplay);
-                    this.setState({dataDisplay: newDataDisplay});
-                })
-                .catch((err)=>{
-                    console.error(err);
-                });
-                // console.log("Data send ");
-                // console.log(newDataDisplay);
-      }
-    render() { 
-        // console.log("data is "+JSON.stringify(this.state.dataDisplay));
-        return (<div style={styles}>
-            <Line data={this.state.dataDisplay} options={options}> </Line>
-        </div>
+        axios.get("http://localhost:4000/api/getWetherData")
+            .then(function(res){
+                console.log("Result from API");
+                console.log(res.data);
+                const result = res.data;
+                newDataDisplay.labels.push("current");
+                newDataDisplay.datasets[0].data.push(result.current.temp_f);
+                const forecast = result.forecast;
+                for(let i=0;i<forecast.length;i++){
+                    const h = forecast[i];                        
+                    newDataDisplay.datasets[0].data.push( h.temp_f);
+                    newDataDisplay.labels.push(h.time);
+                }
+                this.setState({dataDisplay: newDataDisplay});
+            }).catch((err)=>{
+                console.error(err);
+        });
+    }
 
-          );
+    render() { 
+        return (
+            <div style={styles}>
+                <Line data={this.state.dataDisplay} options={options}> </Line>
+            </div>
+
+        );
     }
 }
  
